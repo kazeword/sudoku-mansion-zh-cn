@@ -1,0 +1,21 @@
+{
+  "_说明": "本文件是安装记录的示例格式，install.py 安装后会生成真的 installed.json（含本机绝对路径）。",
+  "patchVersion": "1.3.1-zh-cn.1",
+  "gameVersion": "1.3.1",
+  "installedAt": "YYYYMMDD-HHMMSS",
+  "backupDir": "<游戏目录>\\resources\\zh-cn-backup-1.3.1-adapted-<时间戳>",
+  "files": {
+    "frontendJson": {
+      "path": "<游戏目录>\\resources\\frontend\\dist\\browser\\assets\\mansion.json",
+      "replacements": 428
+    },
+    "backendJson": {
+      "path": "<游戏目录>\\resources\\backend\\data\\mansions\\mansion_default.json",
+      "replacements": 428
+    },
+    "index": {
+      "path": "<游戏目录>\\resources\\frontend\\dist\\browser\\index.html",
+      "replacements": null
+    }
+  }
+}

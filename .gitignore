@@ -1,0 +1,12 @@
+# 构建缓存
+__pycache__/
+*.pyc
+.source/
+
+# 构建产物（发布时通过 tools/build_release.py 重新生成）
+build/
+dist/
+*.zip
+
+# 本机安装记录（含绝对路径，不应提交）
+installed.json
