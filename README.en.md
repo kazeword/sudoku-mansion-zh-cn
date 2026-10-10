@@ -10,6 +10,10 @@ It builds on [YeWu233/sudoku-mansion-zh-cn](https://github.com/YeWu233/sudoku-ma
 (the original community patch, which targets 1.2.7) and adds the text that 1.3.0 / 1.3.1
 changed or introduced: new story beats, reworked puzzle rules, the new hint system, and new UI strings.
 
+<img src="docs/screenshot-main-menu.png" alt="Chinese main menu after installing the patch: Continue / Options / Credits / Quit" width="820">
+
+<sub>The main menu after installing (real 1.3.1 screenshot).</sub>
+
 > [中文说明](README.md)
 
 ## Scope

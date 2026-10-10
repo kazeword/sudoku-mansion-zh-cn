@@ -10,3 +10,6 @@ dist/
 
 # 本机安装记录（含绝对路径，不应提交）
 installed.json
+
+# 一次性维护脚本（提上游 PR/issue 用）
+tools/upstream_pr.py
