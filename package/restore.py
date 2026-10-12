@@ -25,7 +25,8 @@ def main():
     manifest_path = args.manifest or os.path.join(HERE, "installed.json")
     if not os.path.isfile(manifest_path):
         raise SystemExit(f"找不到安装记录：{manifest_path}；请手动从备份目录还原。")
-    manifest = json.load(open(manifest_path, encoding="utf-8"))
+    with open(manifest_path, encoding="utf-8-sig") as f:      # 兼容带 BOM 的文件
+        manifest = json.load(f)
     backup = manifest["backupDir"]
 
     if args.list:
@@ -64,7 +65,9 @@ def main():
             print(f"已删除：{p}")
 
     manifest["restoredAt"] = datetime.now().strftime("%Y%m%d-%H%M%S")
-    json.dump(manifest, open(manifest_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    with open(manifest_path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=2)
+        f.write("\n")
     print("\n已恢复英文原文件。请从 Steam 正常启动游戏。")
     print("（如果 Steam 之后更新过游戏，请改用 Steam 的“验证游戏文件完整性”。）")
 

@@ -25,9 +25,9 @@ SOURCE_PATCH = os.path.join(ROOT, ".source", "patch")
 
 PACKAGE_SRC = [
     "install.py", "restore.py", "verify.py", "make_patch.py", "zh_cn_data.py",
-    "zh-cn-patch.css", "installed.json.example",
+    "zh-cn-patch.template.js", "zh-cn-patch.css", "installed.json.example",
     "README.md", "LICENSE", "THIRD-PARTY-NOTICES.md",
-    "安装汉化-1.3.1.ps1", "还原英文-1.3.1.ps1",
+    "安装汉化-1.3.2.ps1", "还原英文-1.3.2.ps1",
 ]
 TOOLS_SRC = ["build_release.py", "merge_translation_data.py"]
 

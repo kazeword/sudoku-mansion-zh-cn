@@ -66,7 +66,7 @@
     ["That file does not look like a Sudoku Mansion save.",
      "那个文件看起来不像数独庄园的存档。"],
     ["Check for wrong digits (prompts to remove them)",
-     "检查错误的数字（提示删除它们）"],
+     "检查错误数字（会提示移除）"],
     ["Highlight row, column & region of selected cell",
      "突出显示所选格的行、列和区域"],
     ["You can toggle this any time during the game.",
@@ -956,7 +956,7 @@
     ["OS",
      "操作系统"],
     ["OK",
-     "好的"],
+     "确定"],
     ["Show solving hint",
      "查看解题提示"],
     ["Main Quest",
@@ -1182,7 +1182,55 @@
     ["You have unsaved changes.",
      "你有未保存的更改。"],
     ["You have unsaved changes. Discard them and switch mansions?",
-     "你有未保存的更改。要放弃更改并切换庄园吗？"]
+     "你有未保存的更改。要放弃更改并切换庄园吗？"],
+    ["Remove wrong digits",
+     "移除错误数字"],
+    ["Do nothing",
+     "不做处理"],
+    ["Rewind",
+     "回退"],
+    ["Close",
+     "关闭"],
+    ["Warning",
+     "警告"],
+    ["Dismiss",
+     "忽略"],
+    ["Yes",
+     "是"],
+    ["No",
+     "否"],
+    ["Boss Links (",
+     "首领关联 ("],
+    ["Boss Icons",
+     "首领图标"],
+    ["Boss cell",
+     "首领格"],
+    ["Defeated boss cell",
+     "已击败的首领格"],
+    ["Remove Boss Link",
+     "移除首领关联"],
+    ["API Name (Steam id) ",
+     "API 名称（Steam ID） "],
+    ["Display Name ",
+     "显示名称 "],
+    ["Shown on: ",
+     "显示于："],
+    ["Opened when this ",
+     "在以下条件满足时开启："],
+    ["Rooms (",
+     "房间 ("],
+    ["Level 1",
+     "第 1 层"],
+    ["Double-clicking a revealed boss cell opens its boss. Once that boss (and every completion boss chained after it) is defeated, the cell's solution digit is placed. Row and col are 1-indexed.",
+     "双击已揭示的首领格会打开其首领谜题。该首领（以及其后串联的每一个完成首领）被击败后，该格的答案数字会被填入。行号和列号从 1 开始。"],
+    ["Return to Boss",
+     "返回首领"],
+    ["Continue to ",
+     "继续前往 "],
+    ["Fixed: Switching classes won't change this room",
+     "固定：切换身份不会改变此房间"],
+    ["Mansion (default)",
+     "庄园（默认）"]
   ]);;
   exact.set('Show solving hint', '查看解题提示');
   exact.set('Main Quest', '主线任务');
@@ -1195,7 +1243,14 @@
     if ((match = core.match(/^Row (\d+) column (\d+)$/))) return `第 ${match[1]} 行，第 ${match[2]} 列`;
     if ((match = core.match(/^Removed (\d+) incorrect digits?$/))) return `已移除 ${match[1]} 个错误数字`;
     if ((match = core.match(/^There (?:is|are) (\d+) wrong digits?\.$/))) return `有 ${match[1]} 个错误数字。`;
+    // 检查错误数字按钮：正文带 " in this room." 后缀，旧正则匹配不到
+    if ((match = core.match(/^There (?:is|are) (\d+) wrong digits? in this room\.$/))) return `本房间有 ${match[1]} 个错误数字。`;
     if ((match = core.match(/^This room is fully filled but there (?:is|are) (\d+) wrong digits?\.$/))) return `本房间已填满，但有 ${match[1]} 个错误数字。`;
+    if ((match = core.match(/^This room is fully filled but there (?:is|are) (\d+) wrong digits? in this room\.$/))) return `本房间已填满，但有 ${match[1]} 个错误数字。`;
+    // 回退说明（Rewind 按钮旁的补充文字）
+    if ((match = core.match(/^Rewinding undoes the last (\d+) moves?, removing (\d+) digits?\.$/))) return `回退将撤销最近 ${match[1]} 步，并移除 ${match[2]} 个数字。`;
+    if ((match = core.match(/^Rewinding undoes the last (\d+) moves?\.$/))) return `回退将撤销最近 ${match[1]} 步。`;
+    if (core === "They go further back than the undo history reaches, so this room can't be rewound past them.") return '它们超出了撤销历史的范围，本房间无法回退到那之前。';
     if ((match = core.match(/^Digit (\d+) entered into the boss cell$/))) return `数字 ${match[1]} 已填入首领格`;
     if ((match = core.match(/^Switch class \(currently (.+)\)$/))) return `切换身份（当前：${translatedCore(match[1])}）`;
     if ((match = core.match(/^(.+) class room$/))) return `${translatedCore(match[1])}身份房间`;

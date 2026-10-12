@@ -96,6 +96,40 @@ JSON_NEW = {
 """箭头格中的数字，等于所有“数字值恰好等于其与箭头提示距离”的数字之和。\n若同一格内有多个箭头，则将这些方向上所有此类数字相加。\n\n箭头跃迁：从整个庄园中每个含箭头的格出发，沿箭头方向移动与该格数字相等的格数。若目标位置在盘面之外，则必须把该箭头的数字填在盘面之外的那个格上。此操作只能在庄园总览中完成。""",
 
 "Upper Foyer Mod": "上层门厅 Mod",
+
+# ==================== 1.3.2 新增 / 改写 ====================
+"The Threefold Vault - Phase 1": "三层金库 · 第一阶段",
+"Vault Boss - Phase 1": "金库首领 · 第一阶段",
+"Phasing Boss: Deducing all digits in visible cells will transform the boss to its next phase.\n\nEach line follows a specific constraint type from a list of constraint. It is up to the solver to determine which line belongs to which type. \n\nAt the start of the puzzle, all lines are German Whisper lines. \n\nEach line constraint type may contain no repeated digits anywhere in the puzzle.":
+"相位制首领：推理出所有可见格中的数字，即可让首领进入下一阶段。\n\n每条线都遵循约束列表中的某一种具体约束类型。哪条线属于哪种类型，需要解题者自行判断。\n\n谜题开始时，所有线都是德国耳语线。\n\n同一种线约束类型的线在整个谜题中都不允许出现重复数字。",
+
+"The first layer is complete. But this puzzle is far from over.":
+"第一层完成了。但这个谜题还远未结束。",
+
+"You instantly feel that this boss is different. \n\nYou can sense three different layers, each more intricate than the last.\n\nYou hear german whispers telling you to approach the first layer.":
+"你立刻感到这个首领与众不同。\n\n你能察觉到三层不同的结构，一层比一层更复杂。\n\n你听见德国耳语，指引你靠近第一层。",
+
+"The Threefold Vault - Phase 2": "三层金库 · 第二阶段",
+"Vault Boss - Phase 2": "金库首领 · 第二阶段",
+"Phasing Boss: Deducing all digits in visible cells will transform the boss to its next phase.\n\nEach line follows a specific constraint type from a list of constraint. It is up to the solver to determine which line belongs to which type. \n\nAll lines are either German Whisper or Region Sum lines. \n\nEach line constraint type may contain no repeated digits anywhere in the puzzle.":
+"相位制首领：推理出所有可见格中的数字，即可让首领进入下一阶段。\n\n每条线都遵循约束列表中的某一种具体约束类型。哪条线属于哪种类型，需要解题者自行判断。\n\n所有线要么是德国耳语线，要么是区域和线。\n\n同一种线约束类型的线在整个谜题中都不允许出现重复数字。",
+
+"The second layer lies before you. \n\nThe different perspectives try to connect, but you can only see faint agreements between blue regions and whispered connections.":
+"第二层就在你眼前。\n\n不同的视角试图彼此衔接，但你只能看到蓝色区域与耳语连接之间若有若无的呼应。",
+
+"The Threefold Vault - Phase 3": "三层金库 · 第三阶段",
+"Vault Boss - Phase 3": "金库首领 · 第三阶段",
+"Phasing Boss: You have completed the puzzle when the complete grid is filled.\n\nEach line follows a specific constraint type from a list of constraint. It is up to the solver to determine which line belongs to which type. \n\nAll lines are either German Whisper, Region Sum or Modular lines. \n\nEach line constraint type may contain no repeated digits anywhere in the puzzle.":
+"相位制首领：当整个盘面被填满时，谜题即告完成。\n\n每条线都遵循约束列表中的某一种具体约束类型。哪条线属于哪种类型，需要解题者自行判断。\n\n所有线要么是德国耳语线，要么是区域和线，要么是模线。\n\n同一种线约束类型的线在整个谜题中都不允许出现重复数字。",
+
+"Digits in cages multiply to N factorial (N* (N-1)* ... * 1), where N is the size of the cage.\nDigits may repeat in cages, if allowed by other rules.\n\nFor example, the 6 digits in a 6! cage could be 123456 or 143453 or 126256 or any other combination of 6 digits that multiply to 6!. ":
+"笼子中的数字相乘等于 N 的阶乘（N × (N-1) × … × 1），其中 N 是笼子的大小。\n若其他规则允许，笼子内的数字可以重复。\n\n例如，6! 笼子中的 6 个数字可以是 123456，也可以是 143453、126256，或任何其他乘积为 6! 的 6 个数字组合。",
+
+"Each row and region contains the digits 0 to 9 exactly once. Digits CAN be equal in the same column, if allowed by other rules.\n\nCells that are orthogonally adjacent cannot contain consecutive digits. \n\nAssign each of the four regions arbitrarily to a unique suit from clubs, spades, hearts, diamonds.\n\nDivide the grid into 8 non-overlapping groups of 5 orthogonally connected cells, and assign a unique hand each from the following:\nRoyal Flush: 9 to 5 of the same suit\nStraight Flush: 5 consecutive digits of the same suit \nFour of of a Kind: 4 identical digits + 1 arbitrary digit\nFull House: 3 identical digits + 2 identical digits\nFlush: 5 digits of the same suit\nStraight: 5 consecutive digits of arbitrary suits \nThree of a Kind: 3 identical digits + 2 arbitrary digits\nTwo Pair: 2 + 2 identical digits + 1 arbitrary digit\n\nThe placement of digits are not relevant in each hand, only the combination of digits is important.\nEach hand counts as its highest rating. So e.g. a 11122 cannot be used as a three of a kind.":
+"每一行和每个区域都恰好包含一次 0 到 9。若其他规则允许，同一列中的数字可以相同。\n\n正交相邻的格不能包含连续数字。\n\n把四个区域任意分别指定为梅花、黑桃、红桃、方块中的一种花色。\n\n将盘面划分为 8 个互不重叠的、由 5 个正交连通格组成的组，并为每组指定下列牌型之一：\n皇家同花顺：同花色的 9 到 5\n同花顺：同花色的 5 个连续数字\n四条：4 个相同数字 + 1 个任意数字\n葫芦：3 个相同数字 + 2 个相同数字\n同花：同花色的 5 个数字\n顺子：任意花色的 5 个连续数字\n三条：3 个相同数字 + 2 个任意数字\n两对：2 + 2 个相同数字 + 1 个任意数字\n\n每组中数字的位置无关紧要，只有数字的组合重要。\n每组按其中最高的牌型计分。例如 11122 不能当作三条使用。",
+
+"Main Hall Mod": "主厅 Mod",
+"Stairways Mod": "楼梯间 Mod",
 }
 
 # UI (DOM) strings that were added or reworded in 1.3.0-1.3.1
@@ -219,4 +253,39 @@ UI_NEW = {
     "You have unsaved changes.": "你有未保存的更改。",
     "You have unsaved changes. Discard them and switch mansions?": "你有未保存的更改。要放弃更改并切换庄园吗？",
     "Create a placeholder boss without a puzzle": "创建一个没有谜题的首领占位符",
+
+    # ================= 「检查错误数字」弹窗（1.3.x 全部文案） =================
+    "All digits are correct!": "所有数字都正确！",
+    "Remove wrong digits": "移除错误数字",
+    "Do nothing": "不做处理",
+    "Rewind": "回退",
+    "Check for wrong digits (prompts to remove them)": "检查错误数字（会提示移除）",
+    "Close": "关闭",
+    "Confirm": "确认",
+    "Cancel": "取消",
+    "OK": "确定",
+    "Warning": "警告",
+    "Dismiss": "忽略",
+    "Continue": "继续",
+    "Yes": "是",
+    "No": "否",
+
+    # ================= 1.3.2 新增：三层金库分阶段 Boss =================
+    "Boss Links (": "首领关联 (",
+    "Boss Icons": "首领图标",
+    "Boss cell": "首领格",
+    "Defeated boss cell": "已击败的首领格",
+    "Remove Boss Link": "移除首领关联",
+    "API Name (Steam id) ": "API 名称（Steam ID） ",
+    "Display Name ": "显示名称 ",
+    "Shown on: ": "显示于：",
+    "Opened when this ": "在以下条件满足时开启：",
+    "Rooms (": "房间 (",
+    "Level 1": "第 1 层",
+    "Double-clicking a revealed boss cell opens its boss. Once that boss (and every completion boss chained after it) is defeated, the cell's solution digit is placed. Row and col are 1-indexed.":
+        "双击已揭示的首领格会打开其首领谜题。该首领（以及其后串联的每一个完成首领）被击败后，该格的答案数字会被填入。行号和列号从 1 开始。",
+    "Return to Boss": "返回首领",
+    "Continue to ": "继续前往 ",
+    "Fixed: Switching classes won't change this room": "固定：切换身份不会改变此房间",
+    "Mansion (default)": "庄园（默认）",
 }

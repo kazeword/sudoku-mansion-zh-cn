@@ -53,7 +53,8 @@ def main():
 
     manifest = None
     if os.path.isfile(args.manifest):
-        manifest = json.load(open(args.manifest, encoding="utf-8"))
+        with open(args.manifest, encoding="utf-8-sig") as f:    # 兼容带 BOM 的文件
+            manifest = json.load(f)
         browser_hint = os.path.dirname(manifest["files"]["index"]["path"])
         # <游戏目录>\resources\frontend\dist\browser -> <游戏目录>
         game_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(browser_hint))))

@@ -50,8 +50,8 @@ def main():
     ap.add_argument("--source-patch", default=os.path.join(HERE, ".source", "patch"),
                     help="官方 1.2.7 汉化包的 patch 目录")
     ap.add_argument("--out", default=HERE, help="输出目录（默认：本目录）")
-    ap.add_argument("--patch-version", default="1.3.1-zh-cn.1")
-    ap.add_argument("--game-version", default="1.3.1")
+    ap.add_argument("--patch-version", default="1.3.2-zh-cn.1")
+    ap.add_argument("--game-version", default="1.3.2")
     args = ap.parse_args()
 
     src_js_path = os.path.join(args.source_patch, "zh-cn-patch.js")
@@ -61,16 +61,28 @@ def main():
             raise SystemExit(f"找不到官方汉化数据：{p}\n请用 --source-patch 指定官方补丁的 patch 目录。")
     os.makedirs(args.out, exist_ok=True)
 
-    src_js = open(src_js_path, encoding="utf-8").read()
+    # 基底：优先用本目录的模板（含 1.3.x 的额外正则逻辑），Map 位置留 __MAP__ 占位
+    template_path = os.path.join(HERE, "zh-cn-patch.template.js")
+    if os.path.isfile(template_path):
+        src_js = open(template_path, encoding="utf-8").read()
+        if "__MAP__" not in src_js:
+            raise SystemExit(f"模板缺少 __MAP__ 占位标记：{template_path}")
+        map_marker = "__MAP__"
+    else:
+        # 退路：直接用官方 JS，整体替换它的 Map 段
+        src_js = open(src_js_path, encoding="utf-8").read()
+        map_marker = None
 
     # ---- 还原官方界面翻译表（保持顺序）----
+    # 表始终从「官方 JS」里读，模板只提供正文逻辑
+    src_js_official = open(src_js_path, encoding="utf-8").read()
     orig_ui = {}
-    start = src_js.index("new Map([")
-    end = src_js.index("]);", start)
+    start = src_js_official.index("new Map([")
+    end = src_js_official.index("]);", start)
     for a, b in re.findall(r'"((?:[^"\\]|\\.)*)"\s*,\s*"((?:[^"\\]|\\.)*)"',
-                           src_js[start + len("new Map(["):end], re.S):
+                           src_js_official[start + len("new Map(["):end], re.S):
         orig_ui[unescape_js(a)] = unescape_js(b)
-    for a, b in re.findall(r"exact\.set\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\)", src_js, re.S):
+    for a, b in re.findall(r"exact\.set\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\)", src_js_official, re.S):
         orig_ui[unescape_js(a)] = unescape_js(b)
 
     # ---- 合并界面新增译文（覆盖旧词条）----
@@ -89,8 +101,13 @@ def main():
         entries[h] = {"hash": h, "target": tgt}
 
     pairs = ",\n    ".join(f"[{js_quote(k)},\n     {js_quote(v)}]" for k, v in ui_table.items())
-    new_range = "new Map([\n    " + pairs + "\n  ]);"
-    new_js = src_js[:start] + new_range + src_js[end + 2:]
+    if map_marker:
+        # 模板路线：只替换 __MAP__ 占位
+        new_js = src_js.replace(map_marker, "[\n    " + pairs + "\n  ]", 1)
+    else:
+        # 退路：整体替换官方 JS 的 Map 段
+        new_range = "new Map([\n    " + pairs + "\n  ]);"
+        new_js = src_js[:start] + new_range + src_js[end + 2:]
     new_js = new_js.replace("/* eslint-disable */\n", "")
 
     with open(os.path.join(args.out, "zh-cn-patch.js"), "w", encoding="utf-8", newline="\n") as f:

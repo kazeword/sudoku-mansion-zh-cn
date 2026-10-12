@@ -16,7 +16,7 @@ import sys
 from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REQUIRED_VERSION = "1.3.1"
+REQUIRED_VERSION = "1.3.2"
 FIELDS = ("name", "title", "description", "text", "rules", "hint", "label",
           "canvasTutorial", "roomCanvasTutorial", "unlockPopupText")
 MEDIA_RE = re.compile(r"\.(?:images|audio)\[\d+\]$")
@@ -43,9 +43,22 @@ def sha256_text(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def read_json(path):
+    """读 JSON：兼容带 BOM 的文件。"""
+    with open(path, encoding="utf-8-sig") as f:
+        return json.load(f)
+
+
+def write_json(path, data):
+    """写 JSON：UTF-8 无 BOM，避免部分工具写入 BOM 后解析失败。"""
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+
 def load_translations():
     path = os.path.join(HERE, "translations.json")
-    data = json.load(open(path, encoding="utf-8"))
+    data = read_json(path)
     return {e["hash"]: e["target"] for e in data["entries"]}, data
 
 
@@ -118,6 +131,8 @@ def main():
     print(f"汉化数据版本: {meta['patchVersion']}（适用游戏 {meta['gameVersion']}）")
     print(f"翻译条目: {len(table)}")
 
+    target_version = meta["gameVersion"]
+
     game_root = find_game_root(args.game_root)
     exe = os.path.join(game_root, "Sudoku Mansion.exe")
     ver = None
@@ -166,8 +181,8 @@ def main():
         print(f"  文本替换 {total} 处 -> {os.path.basename(path)}")
 
     matches = results["frontendJson"]["replacements"] + results["backendJson"]["replacements"]
-    if ver and not (ver == REQUIRED_VERSION or ver.startswith(REQUIRED_VERSION + ".")):
-        print(f"!! 提示：本汉化按游戏 {REQUIRED_VERSION} 制作，当前版本为 {ver}。")
+    if ver and not (ver == target_version or ver.startswith(target_version + ".")):
+        print(f"!! 提示：本汉化按游戏 {target_version} 制作，当前版本为 {ver}。")
         print(f"!! 已成功匹配 {matches} 处文本，可以继续安装；如出现中英混杂属正常现象。")
 
     # ---- 2. index.html ----
@@ -195,7 +210,7 @@ def main():
 
     # ---- 3. 备份 ----
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    backup = os.path.join(resources, f"zh-cn-backup-{REQUIRED_VERSION}-adapted-{stamp}")
+    backup = os.path.join(resources, f"zh-cn-backup-{target_version}-adapted-{stamp}")
     os.makedirs(os.path.join(backup, "originals"), exist_ok=True)
     for label, info in results.items():
         shutil.copy2(info["path"], os.path.join(backup, "originals", os.path.basename(info["path"]) + f".{label}"))
@@ -223,8 +238,7 @@ def main():
                           "sha256After": hashlib.sha256(open(info["path"], "rb").read()).hexdigest()}
                   for label, info in results.items()},
     }
-    json.dump(manifest, open(manifest_path, "w", encoding="utf-8"),
-              ensure_ascii=False, indent=2)
+    write_json(manifest_path, manifest)
 
     print()
     print(f"《Sudoku Mansion》简体中文汉化（{meta['patchVersion']}）安装完成。")
