@@ -138,7 +138,7 @@ def main():
         check("已挂载 zh-cn-patch.css", "zh-cn-patch.css" in idx)
         check("未重复注入", idx.count("zh-cn-patch.js") == 1)
         poly = re.search(r"polyfills-[^\"']+\.js", idx)
-        if poly:
+        if poly and "zh-cn-patch.js" in idx:
             check("汉化脚本在模块入口之前", idx.index("zh-cn-patch.js") < poly.start())
 
     print("\n结果:", "全部通过" if ok else "存在问题")

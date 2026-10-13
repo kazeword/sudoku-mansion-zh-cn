@@ -1,10 +1,10 @@
-# Sudoku Mansion — Simplified Chinese Patch (adapted for 1.3.2)
+# Sudoku Mansion — Simplified Chinese Patch (adapted for 1.3.3)
 
-[![game version](https://img.shields.io/badge/game-1.3.2-e8a83b)](https://store.steampowered.com/app/5005590/)
-[![patch version](https://img.shields.io/badge/patch-1.3.2--zh--cn.1-e6c163)](#)
+[![game version](https://img.shields.io/badge/game-1.3.3-e8a83b)](https://store.steampowered.com/app/5005590/)
+[![patch version](https://img.shields.io/badge/patch-1.3.3--zh--cn.1-e6c163)](#)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-An **unofficial Simplified Chinese localization** for *Sudoku Mansion*, adapted to game version **1.3.2**.
+An **unofficial Simplified Chinese localization** for *Sudoku Mansion*, adapted to game version **1.3.3** (1.3.2 works too).
 
 It builds on [YeWu233/sudoku-mansion-zh-cn](https://github.com/YeWu233/sudoku-mansion-zh-cn)
 (the original community patch, which targets 1.2.7) and adds everything 1.3.0 / 1.3.1 / 1.3.2
@@ -30,7 +30,7 @@ rules, and the new boss-link editor UI.
 
 ## Install
 
-1. Download `Sudoku-Mansion-zh-CN-1.3.2-zh-cn.1.zip` from [Releases](../../releases) (or use `package/`).
+1. Download `Sudoku-Mansion-zh-CN-1.3.3-zh-cn.1.zip` from [Releases](../../releases) (or use `package/`).
 2. Extract it and **fully close the game** (make sure no `Sudoku Mansion.exe` is running).
 3. In the extracted folder, run:
 
@@ -38,7 +38,7 @@ rules, and the new boss-link editor UI.
    python install.py
    ```
 
-   You can also double-click `安装汉化-1.3.2.ps1`.
+   You can also double-click `安装汉化.ps1`.
 4. Launch the game normally from Steam.
 
 The installer locates the Steam install automatically, verifies the game version, counts the
@@ -46,7 +46,7 @@ matching strings (439 per file on 1.3.2), backs up the three original files, the
 translation and hooks the runtime script into `index.html`. Use `python install.py --dry-run` to
 check without touching anything. Python 3 is the only requirement; no network access is needed.
 
-**Restore English:** `python restore.py` (or double-click `还原英文-1.3.2.ps1`).
+**Restore English:** `python restore.py` (or double-click `还原英文.ps1`).
 
 **Self-check:** `python verify.py`.
 
@@ -64,6 +64,19 @@ check without touching anything. Python 3 is the only requirement; no network ac
 
 ## Changelog
 
+### 1.3.3-zh-cn.1 — 2026-10-13
+
+- Adapted to game **1.3.3** ("Outside Fading" hotfix). This release adds **no new text** — the
+  translation is identical to 1.3.2-zh-cn.1; only the version alignment and installer changed.
+- Installer improvements for the common "Steam only overwrote `index.html`, the translated
+  `mansion.json` is still there" case:
+  - when the data is already Chinese it **automatically switches to hook-only mode** instead of
+    refusing with "already installed";
+  - in that mode it **reuses an existing backup that still holds the English originals**, so a
+    rollback cannot restore Chinese as if it were the original (`--hook-only` forces the mode);
+  - `verify.py` now reports cleanly when the hook is missing instead of raising.
+
+### 1.3.2-zh-cn.1 — 2026-10-12
 ### 1.3.2-zh-cn.1 — 2026-10-12
 
 - Adapted to game **1.3.2**: +16 text entries, +16 UI strings, **439 replacements per file**.

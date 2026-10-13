@@ -50,8 +50,8 @@ def main():
     ap.add_argument("--source-patch", default=os.path.join(HERE, ".source", "patch"),
                     help="官方 1.2.7 汉化包的 patch 目录")
     ap.add_argument("--out", default=HERE, help="输出目录（默认：本目录）")
-    ap.add_argument("--patch-version", default="1.3.2-zh-cn.1")
-    ap.add_argument("--game-version", default="1.3.2")
+    ap.add_argument("--patch-version", default="1.3.3-zh-cn.1")
+    ap.add_argument("--game-version", default="1.3.3")
     args = ap.parse_args()
 
     src_js_path = os.path.join(args.source_patch, "zh-cn-patch.js")

@@ -1,13 +1,13 @@
-# Sudoku Mansion 简体中文汉化 · 1.3.2 适配版
+# Sudoku Mansion 简体中文汉化 · 1.3.3 适配版
 
-[![game version](https://img.shields.io/badge/game-1.3.2-e8a83b)](https://store.steampowered.com/app/5005590/)
-[![patch version](https://img.shields.io/badge/patch-1.3.2--zh--cn.1-e6c163)](#)
+[![game version](https://img.shields.io/badge/game-1.3.3-e8a83b)](https://store.steampowered.com/app/5005590/)
+[![patch version](https://img.shields.io/badge/patch-1.3.3--zh--cn.1-e6c163)](#)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-《Sudoku Mansion（数独庄园）》的**非官方简体中文补丁**，适配游戏 **1.3.2**。
+《Sudoku Mansion（数独庄园）》的**非官方简体中文补丁**，适配游戏 **1.3.3**（1.3.2 同样适用）。
 
 译文基础来自 [YeWu233/sudoku-mansion-zh-cn](https://github.com/YeWu233/sudoku-mansion-zh-cn)（官方汉化，支持到 1.2.7）。
-本仓库在它之上完成 1.3.x 的适配与补译：**1.3.0 / 1.3.1 / 1.3.2 新增和改写的剧情、规则、提示、界面文本都已汉化。**
+本仓库在它之上完成 1.3.x 的适配与补译：**1.3.0 / 1.3.1 / 1.3.2 新增和改写的剧情、规则、提示、界面文本都已汉化；1.3.3 无文本变化，直接可用。**
 
 <img src="docs/screenshot-main-menu.png" alt="安装汉化后的中文主菜单：继续游戏 / 选项 / 制作人员 / 退出游戏" width="820">
 
@@ -28,7 +28,7 @@
 
 ## 下载与安装
 
-1. 到 [Releases](../../releases) 下载 `Sudoku-Mansion-zh-CN-1.3.2-zh-cn.1.zip`（或用源码里的 `package/` 目录）。
+1. 到 [Releases](../../releases) 下载 `Sudoku-Mansion-zh-CN-1.3.3-zh-cn.1.zip`（或用源码里的 `package/` 目录）。
 2. 解压，**完全退出游戏**（任务管理器确认没有 `Sudoku Mansion.exe`）。
 3. 在解压出的文件夹里打开 PowerShell：
 
@@ -36,7 +36,7 @@
    python install.py
    ```
 
-   也可以双击 `安装汉化-1.3.2.ps1`。
+   也可以双击 `安装汉化.ps1`。
 
 4. 从 Steam 正常启动游戏即可。
 
@@ -44,7 +44,7 @@
 写入译文并挂载汉化脚本。只想检查不改文件：`python install.py --dry-run`。
 仅需 Python 3，安装/还原都不需要联网。
 
-**还原英文**：`python restore.py`（或双击 `还原英文-1.3.2.ps1`）。
+**还原英文**：`python restore.py`（或双击 `还原英文.ps1`）。
 **安装自检**：`python verify.py`。
 
 ## 工作原理
@@ -59,6 +59,16 @@
 
 ## 更新日志
 
+### 1.3.3-zh-cn.1 — 2026-10-13
+
+- 适配游戏 **1.3.3**（"Outside Fading" 小修）。这一版**没有新增或改写任何文本**，
+  汉化内容与 1.3.2-zh-cn.1 完全一致，仅版本对齐。
+- 安装脚本改进（针对「Steam 更新只覆盖 `index.html`、译好的 `mansion.json` 还在」这一常见情形）：
+  - 检测到文本已是中文时**自动切换为「只重新挂载入口」模式**，不再误报「已安装」而拒绝执行；
+  - 该模式下**自动复用含有英文原件的旧备份**，避免把中文当成原件导致无法回滚（`--hook-only` 可手动指定）；
+  - `verify.py` 在入口未挂载时也能给出结论而不是抛异常。
+
+### 1.3.2-zh-cn.1 — 2026-10-12
 ### 1.3.2-zh-cn.1 — 2026-10-12
 
 - 适配游戏 **1.3.2**：新增 **16 条**文本译文、**16 条**界面译文，安装时替换 **439 处/文件**（原 428）。

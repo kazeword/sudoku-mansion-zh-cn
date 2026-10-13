@@ -1,4 +1,4 @@
-﻿# Sudoku Mansion 简体中文汉化安装（1.3.2 适配版）
+﻿# Sudoku Mansion 简体中文汉化安装
 # 双击本文件即可运行；也可在 PowerShell 中执行 python install.py
 $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path

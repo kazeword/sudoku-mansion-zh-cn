@@ -1,4 +1,4 @@
-﻿# Sudoku Mansion 简体中文汉化 · 还原英文（1.3.2 适配版）
+﻿# Sudoku Mansion 简体中文汉化 · 还原英文
 # 双击本文件即可运行；也可在 PowerShell 中执行 python restore.py
 $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path

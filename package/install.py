@@ -16,7 +16,7 @@ import sys
 from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-REQUIRED_VERSION = "1.3.2"
+REQUIRED_VERSION = "1.3.3"
 FIELDS = ("name", "title", "description", "text", "rules", "hint", "label",
           "canvasTutorial", "roomCanvasTutorial", "unlockPopupText")
 MEDIA_RE = re.compile(r"\.(?:images|audio)\[\d+\]$")
@@ -98,6 +98,59 @@ def apply_translations(text, table):
     return text, total
 
 
+def looks_translated(path, sample_limit=400):
+    """判断某个 mansion.json 是否已经是中文（用于 Steam 更新后只丢入口的场景）。"""
+    try:
+        data = read_json(path)
+    except Exception:
+        return False
+    vals = []
+
+    def walk(node, p):
+        if len(vals) >= sample_limit:
+            return
+        if isinstance(node, list):
+            for i, v in enumerate(node):
+                walk(v, f"{p}[{i}]")
+        elif isinstance(node, dict):
+            for k, v in node.items():
+                if isinstance(v, str) and k in FIELDS and not (k == "name" and MEDIA_RE.search(p)):
+                    if any(ch.isalpha() for ch in v):
+                        vals.append(v)
+                else:
+                    walk(v, f"{p}.{k}")
+
+    walk(data, "$")
+    if not vals:
+        return False
+    with_cjk = sum(1 for v in vals if re.search(r"[\u4e00-\u9fff]", v))
+    return with_cjk / len(vals) >= 0.5
+
+
+def find_english_backup(resources):
+    """找出仍保留英文原件的备份目录（用于回滚）。
+
+    优先返回最近的、`originals/mansion.json.frontendJson` 里没有中文的那种。
+    """
+    if not os.path.isdir(resources):
+        return None
+    candidates = []
+    for name in os.listdir(resources):
+        if not name.startswith("zh-cn-backup"):
+            continue
+        folder = os.path.join(resources, name)
+        front = os.path.join(folder, "originals", "mansion.json.frontendJson")
+        if not os.path.isfile(front):
+            continue
+        if looks_translated(front):
+            continue          # 备份里已经是中文，回滚没意义
+        candidates.append(folder)
+    if not candidates:
+        return None
+    candidates.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+    return candidates[0]
+
+
 def dry_run_report(game_root, table):
     browser = os.path.join(game_root, "resources", "frontend", "dist", "browser")
     files = [
@@ -123,6 +176,8 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--manifest", default=None,
                     help="安装记录写入位置（默认：本脚本所在目录）")
+    ap.add_argument("--hook-only", action="store_true",
+                    help="只重新挂载界面脚本（游戏文本已是中文时用；Steam 更新后入口丢失的常见情形）")
     args = ap.parse_args()
 
     manifest_path = args.manifest or os.path.join(HERE, "installed.json")
@@ -168,26 +223,41 @@ def main():
         return
 
     # ---- 1. 逐文件应用翻译 ----
+    index = open(index_path, encoding="utf-8").read()
+    already = "zh-cn-patch.js" in index
     results = {}
     for label, path in (("frontendJson", front_json), ("backendJson", back_json)):
         text = open(path, encoding="utf-8").read()
+        if args.hook_only:
+            results[label] = {"path": path, "replacements": 0, "new_text": text, "changed": False,
+                              "note": "已跳过（--hook-only）"}
+            print(f"  跳过文本文件（--hook-only）-> {os.path.basename(path)}")
+            continue
         new_text, total = apply_translations(text, table)
         if total == 0:
-            if already:
-                raise SystemExit("检测到汉化已经安装（游戏文本中已无待翻译的英文原文）。\n"
-                                 "如需重新安装，请先运行 python restore.py 还原英文。")
+            if already or looks_translated(path):
+                # 文本已是中文，只缺入口（Steam 更新只重写 index.html 时就是这种情形）
+                print(f"  !! {os.path.basename(path)} 已是中文（无待替换英文），自动切换为“只重新挂载入口”模式")
+                results[label] = {"path": path, "replacements": 0, "new_text": text, "changed": False,
+                                  "note": "文本已是中文，跳过"}
+                continue
             raise SystemExit(f"文本匹配为 0：{path}。游戏文件可能已更新，请先验证游戏文件完整性。")
-        results[label] = {"path": path, "replacements": total, "new_text": new_text}
+        results[label] = {"path": path, "replacements": total, "new_text": new_text, "changed": True}
         print(f"  文本替换 {total} 处 -> {os.path.basename(path)}")
 
-    matches = results["frontendJson"]["replacements"] + results["backendJson"]["replacements"]
-    if ver and not (ver == target_version or ver.startswith(target_version + ".")):
+    matches = sum(r.get("replacements") or 0 for r in results.values())
+    hook_only_mode = all(not r["changed"] for r in results.values())
+    if hook_only_mode and not args.hook_only:
+        print("  -> 游戏文本已全部是中文，本次只需重新挂载界面脚本。")
+    if matches and ver and not (ver == target_version or ver.startswith(target_version + ".")):
         print(f"!! 提示：本汉化按游戏 {target_version} 制作，当前版本为 {ver}。")
         print(f"!! 已成功匹配 {matches} 处文本，可以继续安装；如出现中英混杂属正常现象。")
+    elif matches == 0 and ver and not (ver == target_version or ver.startswith(target_version + ".")):
+        print(f"!! 提示：当前游戏版本 {ver}（数据按 {target_version} 制作）。")
 
     # ---- 2. index.html ----
     if already:
-        print("检测到入口已注入汉化脚本，继续覆盖安装。")
+        print("  入口已有汉化脚本，重建注入。")
     new_index = index.replace('<html lang="en"', '<html lang="zh-CN"', 1)
     new_index = new_index.replace("<title>Sudoku Mansion</title>", "<title>数独庄园</title>", 1)
     if "zh-cn-patch.css" not in new_index:
@@ -206,22 +276,51 @@ def main():
             new_index = new_index[:m.start()] + '<script src="zh-cn-patch.js"></script>' + new_index[m.start():]
     if "zh-cn-patch.js" not in new_index or "zh-cn-patch.css" not in new_index:
         raise SystemExit("入口文件注入失败。")
-    results["index"] = {"path": index_path, "new_text": new_index}
+    results["index"] = {"path": index_path, "new_text": new_index, "changed": True}
 
     # ---- 3. 备份 ----
     stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    backup = os.path.join(resources, f"zh-cn-backup-{target_version}-adapted-{stamp}")
+    changed_labels = [l for l in ("frontendJson", "backendJson", "index") if results[l]["changed"]]
+    prev = None
+    if manifest_path and os.path.isfile(manifest_path):
+        try:
+            prev = read_json(manifest_path)
+        except Exception:
+            prev = None
+    prev_dir = (prev or {}).get("backupDir")
+    base_ok = (prev_dir and os.path.isdir(prev_dir)
+               and os.path.isfile(os.path.join(prev_dir, "originals", "mansion.json.frontendJson"))
+               and not looks_translated(os.path.join(prev_dir, "originals", "mansion.json.frontendJson")))
+    reuse = (set(changed_labels) == {"index"} and base_ok)
+    if not reuse and set(changed_labels) == {"index"}:
+        # 只挂入口时，必须复用“含英文原件”的备份，否则回滚会把中文当成原件
+        found = find_english_backup(resources)
+        if found:
+            prev_dir, base_ok, reuse = found, True, True
+    if reuse:
+        backup = prev_dir
+        print(f"  复用已有备份（本次只改入口）：{backup}")
+    else:
+        backup = os.path.join(resources, f"zh-cn-backup-{target_version}-adapted-{stamp}")
     os.makedirs(os.path.join(backup, "originals"), exist_ok=True)
     for label, info in results.items():
-        shutil.copy2(info["path"], os.path.join(backup, "originals", os.path.basename(info["path"]) + f".{label}"))
+        if not info["changed"]:
+            continue
+        dest = os.path.join(backup, "originals", os.path.basename(info["path"]) + f".{label}")
+        if os.path.isfile(dest):
+            continue                      # 复用备份时不覆盖原文件记录
+        shutil.copy2(info["path"], dest)
     for extra in ("zh-cn-patch.js", "zh-cn-patch.css"):
         dst = os.path.join(browser, extra)
-        if os.path.isfile(dst):
-            shutil.copy2(dst, os.path.join(backup, "originals", extra))
+        dest = os.path.join(backup, "originals", extra)
+        if os.path.isfile(dst) and not os.path.isfile(dest):
+            shutil.copy2(dst, dest)
 
     # ---- 4. 写入 ----
     for label in ("frontendJson", "backendJson", "index"):
         info = results[label]
+        if not info["changed"]:
+            continue
         with open(info["path"], "w", encoding="utf-8", newline="") as f:
             f.write(info["new_text"])
     shutil.copy2(os.path.join(HERE, "zh-cn-patch.js"), os.path.join(browser, "zh-cn-patch.js"))
@@ -232,9 +331,11 @@ def main():
         "gameVersion": ver or meta["gameVersion"],
         "targetGameVersion": meta["gameVersion"],
         "installedAt": stamp,
+        "mode": "hook-only" if hook_only_mode else "full",
         "backupDir": backup,
         "files": {label: {"path": info["path"],
                           "replacements": info.get("replacements"),
+                          "changed": info["changed"],
                           "sha256After": hashlib.sha256(open(info["path"], "rb").read()).hexdigest()}
                   for label, info in results.items()},
     }
@@ -242,7 +343,10 @@ def main():
 
     print()
     print(f"《Sudoku Mansion》简体中文汉化（{meta['patchVersion']}）安装完成。")
-    print(f"文本替换合计：{matches} 处")
+    if hook_only_mode:
+        print("本次模式：只重新挂载入口（游戏内文本此前已是中文）。")
+    else:
+        print(f"文本替换合计：{matches} 处")
     print(f"原文件备份：{backup}")
     print("如需还原英文，运行：python restore.py")
     print("请从 Steam 正常启动游戏。")

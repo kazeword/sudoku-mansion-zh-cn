@@ -1,10 +1,10 @@
-# Sudoku Mansion 简体中文汉化 · 1.3.2 适配版
+# Sudoku Mansion 简体中文汉化 · 1.3.3 适配版
 
-[![game version](https://img.shields.io/badge/game-1.3.2-e8a83b)](https://store.steampowered.com/app/5005590/)
-[![patch version](https://img.shields.io/badge/patch-1.3.2--zh--cn.1-e6c163)](#)
+[![game version](https://img.shields.io/badge/game-1.3.3-e8a83b)](https://store.steampowered.com/app/5005590/)
+[![patch version](https://img.shields.io/badge/patch-1.3.3--zh--cn.1-e6c163)](#)
 [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-《Sudoku Mansion（数独庄园）》的**非官方简体中文补丁**，适配游戏 **1.3.2**。
+《Sudoku Mansion（数独庄园）》的**非官方简体中文补丁**，适配游戏 **1.3.3**。
 
 译文基础来自 [YeWu233/sudoku-mansion-zh-cn](https://github.com/YeWu233/sudoku-mansion-zh-cn)（官方汉化，支持到 1.2.7）。
 本版在其之上完成 1.3.x 的适配与补译：**1.3.0 / 1.3.1 / 1.3.2 新增和改写的剧情、规则、提示、界面文本都已汉化。**
@@ -13,7 +13,7 @@
 
 | 项目 | 说明 |
 | --- | --- |
-| 适用游戏版本 | 1.3.2（Steam App ID 5005590，Windows） |
+| 适用游戏版本 | 1.3.3（1.3.2 同样适用；Steam App ID 5005590，Windows） |
 | 文本翻译 | 384 条（官方）+ 48 条新译 = 432 条 |
 | 界面翻译 | 481 条（官方）+ 127 条新译 = 608 条 |
 | 实际替换 | 每个文本文件 439 处，替换后无残留英文 |
@@ -31,7 +31,7 @@
    python install.py
    ```
 
-   或者直接双击 `安装汉化-1.3.2.ps1`。
+   或者直接双击 `安装汉化.ps1`。
 
 3. 安装脚本会自动定位游戏目录（也可用 `--game-root "路径"` 指定），然后：
    - 检查游戏版本、统计可替换文本数量（1.3.2 正常为每个文件 439 处）；
@@ -52,7 +52,7 @@ python install.py --dry-run
 python restore.py
 ```
 
-从最近一次安装的备份还原 3 个原文件，并删除汉化脚本。（双击 `还原英文-1.3.2.ps1` 等同。）
+从最近一次安装的备份还原 3 个原文件，并删除汉化脚本。（双击 `还原英文.ps1` 等同。）
 
 ## 安装结果自检
 
@@ -72,7 +72,7 @@ python verify.py
   另加两个新增的 `zh-cn-patch.js` / `zh-cn-patch.css`。
 - **不读写存档**，不改游戏程序本身；安装失败自动回滚，还原后与安装前字节级一致。
 
-## 版本修复说明（1.3.2-zh-cn.1）
+## 版本修复说明（1.3.2-zh-cn.1，1.3.3 建议直接使用本版）
 
 - 适配游戏 1.3.2：三层金库分阶段 Boss、笼子阶乘规则、扑克牌型规则、主厅/楼梯间 Mod。
 - **修复「检查错误数字」弹窗整段是英文**：该弹窗正文由游戏拼成
